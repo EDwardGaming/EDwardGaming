@@ -1,0 +1,41 @@
+# 编译器
+CC = gcc
+
+# 目录
+SRC = src
+LIB = lib
+INCLUDE = include
+
+# 源文件和头文件
+SRCS = $(SRC)/add.c $(SRC)/sub.c
+HEADERS = $(INCLUDE)/add.h $(INCLUDE)/sub.h
+
+# 目标文件
+OBJS = $(SRCS:.c=.o)
+
+# 静态库名称
+LIBRARY = $(LIB)/libcal.a
+
+# 可执行文件名称
+EXEC = main-v1
+
+# 默认目标
+all: $(EXEC)
+
+# 编译可执行文件
+$(EXEC): main.c $(LIBRARY)
+	$(CC) main.c -L$(LIB) -lcal -I $(INCLUDE) -o $(EXEC)
+
+# 生成静态库，使用自动变量
+$(LIBRARY): $(OBJS)
+	ar rcs $@ $^
+
+# 编译 .o 文件，利用自动变量
+%.o: %.c $(HEADERS)
+	$(CC) -c $< -I $(INCLUDE) -o $@
+
+# 清理生成的文件
+.PHONY: clean
+clean:
+	rm -f $(SRC)/*.o $(LIBRARY) $(EXEC)
+
